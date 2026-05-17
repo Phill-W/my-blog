@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import Container from "@/components/Container";
 import { cn } from "@/lib/utils";
+
 const navItems = [
   { href: "/", label: "首页" },
   { href: "/blog", label: "博客" },
@@ -11,8 +13,9 @@ const navItems = [
   { href: "/about", label: "关于我" },
 ];
 
-const SiteHeader = () => {
+export default function SiteHeader() {
   const pathname = usePathname();
+
   return (
     <header className="sticky top-0 z-40 border-b border-border/50 bg-background/90 backdrop-blur">
       <Container className="flex h-16 items-center justify-between gap-4">
@@ -22,6 +25,7 @@ const SiteHeader = () => {
         >
           MyBlog
         </Link>
+
         <nav className="flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 p-1">
           {navItems.map((item) => {
             const isActive =
@@ -29,6 +33,7 @@ const SiteHeader = () => {
                 ? pathname === "/"
                 : pathname === item.href ||
                   pathname.startsWith(`${item.href}/`);
+
             return (
               <Link
                 key={item.href}
@@ -48,6 +53,4 @@ const SiteHeader = () => {
       </Container>
     </header>
   );
-};
-
-export default SiteHeader;
+}

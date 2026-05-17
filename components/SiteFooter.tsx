@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Container from "@/components/Container";
 import { ArrowUp } from "lucide-react";
-import { FaGithub, FaLinkedin, FaXTwitter, FaEnvelope } from "react-icons/fa6";
+import { FaEnvelope, FaGithub, FaLinkedin, FaXTwitter } from "react-icons/fa6";
+
+import Container from "@/components/Container";
 
 export default function SiteFooter() {
   const scrollToTop = () => {
