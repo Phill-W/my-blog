@@ -1,5 +1,3 @@
-import { Divide } from "lucide-react";
-
 type SectionHeadingProps = {
   title: string;
   description?: string;
