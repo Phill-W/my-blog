@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 type TagListProps = {
   tags: string[];
 };
+
 export default function TagList({ tags }: TagListProps) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -10,7 +11,7 @@ export default function TagList({ tags }: TagListProps) {
         <Badge
           key={tag}
           variant="secondary"
-          className="rounded-full px-3 py-1 text-xs"
+          className="rounded-full px-3.5 py-1 text-sm"
         >
           {tag}
         </Badge>
