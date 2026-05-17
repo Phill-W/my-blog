@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,7 +36,12 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full bg-background text-foreground">
-        {children}
+        <div className="relative flex min-h-screen flex-col">
+          <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-to-b from-muted/50 to-transparent" />
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+        </div>
       </body>
     </html>
   );
