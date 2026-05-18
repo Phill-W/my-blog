@@ -146,6 +146,21 @@
     @apply mt-8 text-xl font-semibold tracking-tight text-foreground;
   }
 
+  .article-heading__anchor {
+    @apply inline-flex items-center gap-2 no-underline text-inherit;
+  }
+
+  .article-heading__anchor::after {
+    content: "#";
+    @apply text-sm font-medium text-muted-foreground opacity-0 transition-opacity;
+  }
+
+  .article-content h2.article-heading:hover .article-heading__anchor::after,
+  .article-content h3.article-subheading:hover .article-heading__anchor::after,
+  .article-heading__anchor:focus-visible::after {
+    opacity: 1;
+  }
+
   .article-content p {
     @apply leading-8 text-muted-foreground;
   }

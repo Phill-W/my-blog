@@ -14,24 +14,6 @@ import CodeBlock from "@/components/mdx/CodeBlock";
 import ResourceLink from "@/components/mdx/ResourceLink";
 import { cn } from "@/lib/utils";
 
-function slugifyHeading(input: string): string {
-  return input
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w\u4e00-\u9fa5-]/g, "");
-}
-
-function getTextContent(children: ReactNode): string {
-  return Children.toArray(children)
-    .map((child) =>
-      typeof child === "string" || typeof child === "number"
-        ? String(child)
-        : "",
-    )
-    .join("");
-}
-
 function extractPlainText(children: ReactNode): string {
   return Children.toArray(children)
     .map((child) => {
@@ -108,39 +90,49 @@ function isExternalHref(href?: string) {
 }
 
 const components: MDXComponents = {
-  h2: ({ children }) => {
-    const heading = getTextContent(children);
-    const id = slugifyHeading(heading);
-
-    return (
-      <h2 id={id} className="article-heading scroll-mt-24">
-        {children}
-      </h2>
-    );
-  },
-  h3: ({ children }) => {
-    const heading = getTextContent(children);
-    const id = slugifyHeading(heading);
-
-    return (
-      <h3 id={id} className="article-subheading scroll-mt-24">
-        {children}
-      </h3>
-    );
-  },
+  h2: ({ children, className, ...props }) => (
+    <h2
+      {...props}
+      className={cn("article-heading scroll-mt-24", className)}
+    >
+      {children}
+    </h2>
+  ),
+  h3: ({ children, className, ...props }) => (
+    <h3
+      {...props}
+      className={cn("article-subheading scroll-mt-24", className)}
+    >
+      {children}
+    </h3>
+  ),
   p: ({ children }) => <p>{children}</p>,
   ul: ({ children }) => <ul>{children}</ul>,
   ol: ({ children }) => <ol>{children}</ol>,
   li: ({ children }) => <li>{children}</li>,
   blockquote: ({ children }) => <blockquote>{children}</blockquote>,
   hr: () => <hr />,
-  a: ({ href, children }) => {
+  a: ({ href, children, className, ...props }) => {
     const external = isExternalHref(href);
+    const isHashLink = Boolean(href?.startsWith("#"));
+
+    if (isHashLink) {
+      return (
+        <a {...props} href={href} className={className}>
+          {children}
+        </a>
+      );
+    }
 
     return (
       <a
+        {...props}
         href={href}
-        className={cn("article-link", external && "article-link--external")}
+        className={cn(
+          "article-link",
+          external && "article-link--external",
+          className,
+        )}
         target={external ? "_blank" : undefined}
         rel={external ? "noreferrer" : undefined}
       >

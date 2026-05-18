@@ -7,6 +7,16 @@ const withMDX = createMDX({
   options: {
     remarkPlugins: ["remark-gfm"],
     rehypePlugins: [
+      "rehype-slug",
+      [
+        "rehype-autolink-headings",
+        {
+          behavior: "wrap",
+          properties: {
+            className: ["article-heading__anchor"],
+          },
+        },
+      ],
       [
         "rehype-pretty-code",
         {

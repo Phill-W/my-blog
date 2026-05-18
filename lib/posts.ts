@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { cache, type ComponentType } from "react";
+import GithubSlugger from "github-slugger";
 
 import {
   blogPostRegistry,
@@ -38,14 +39,14 @@ const postRegistryBySlug = new Map(
 export const POSTS_PER_PAGE = 3;
 
 export function slugifyHeading(input: string): string {
-  return input
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w\u4e00-\u9fa5-]/g, "");
+  const slugger = new GithubSlugger();
+
+  return slugger.slug(input);
 }
 
 function extractTocFromSource(source: string): PostTocItem[] {
+  const slugger = new GithubSlugger();
+
   return source
     .split("\n")
     .filter((line) => line.startsWith("## "))
@@ -53,7 +54,7 @@ function extractTocFromSource(source: string): PostTocItem[] {
       const heading = line.replace(/^##\s+/, "").trim();
 
       return {
-        id: slugifyHeading(heading),
+        id: slugger.slug(heading),
         heading,
       };
     });
