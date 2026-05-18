@@ -3,6 +3,14 @@ import Link from "next/link";
 import Container from "@/components/Container";
 import PostCard from "@/components/PostCard";
 import SectionHeading from "@/components/SectionHeading";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyFooter,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import {
   filterPosts,
   getAllPostTags,
@@ -10,7 +18,6 @@ import {
   getPostHref,
   paginatePosts,
 } from "@/lib/posts";
-import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type BlogPageProps = {
@@ -64,6 +71,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     filteredPosts,
     resolvedSearchParams.page,
   );
+
+  const hasFilters = Boolean(query) || selectedTag !== "全部";
 
   return (
     <main className="pb-16">
@@ -178,23 +187,36 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-border/70 bg-muted/20 p-8 text-center">
-              <h2 className="text-xl font-semibold text-foreground">
-                没有找到匹配的文章
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                你可以尝试更短的关键词，或者切换到其他标签。
-              </p>
-              <Link
-                href="/blog"
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "default" }),
-                  "mt-6",
-                )}
-              >
-                查看全部文章
-              </Link>
-            </div>
+            <Empty className="mt-6">
+              <EmptyHeader>
+                <EmptyTitle>没有找到匹配的文章</EmptyTitle>
+                <EmptyDescription>
+                  可以试试更短的关键词，或者切换到其他标签。
+                </EmptyDescription>
+              </EmptyHeader>
+
+              <EmptyFooter>
+                <Link
+                  href="/blog"
+                  className={cn(
+                    buttonVariants({ variant: "default", size: "default" }),
+                  )}
+                >
+                  查看全部文章
+                </Link>
+
+                {hasFilters ? (
+                  <Link
+                    href="/blog"
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "default" }),
+                    )}
+                  >
+                    清空当前筛选
+                  </Link>
+                ) : null}
+              </EmptyFooter>
+            </Empty>
           )}
         </Container>
       </section>
