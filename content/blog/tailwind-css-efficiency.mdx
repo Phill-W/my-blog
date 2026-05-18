@@ -1,0 +1,123 @@
+export const metadata = {
+  title: "使用 Tailwind CSS 提升开发效率",
+  description: "整理我在实际写页面时常用的 Tailwind CSS 经验。",
+  date: "2026-05-12",
+  readingTime: "8 分钟阅读",
+  tags: ["Tailwind CSS", "CSS"],
+};
+
+## 一、为什么 Tailwind 对练项目特别有帮助
+
+我喜欢 Tailwind 的原因，并不是“类名写得多”，而是它把样式决策放回了组件本身。写页面时，我不需要一直在 JSX 和 CSS 文件之间反复跳转，而是能在同一个地方把结构和样式一起看清楚。
+
+对初学者来说，这个体验很重要。因为页面刚起步时，最容易混乱的就是“结构在一个文件，样式在另一个文件，最后两个地方都找不到重点”。
+
+## 二、我最常用的一组基础组合
+
+我在做这个博客时，最常用的一组 Tailwind 类大概是：
+
+```tsx
+<div className="rounded-2xl border border-border/70 bg-background p-6 shadow-sm">
+  <h2 className="text-xl font-semibold tracking-tight text-foreground">
+    标题
+  </h2>
+  <p className="mt-2 text-sm leading-6 text-muted-foreground">说明文案</p>
+</div>
+```
+
+这段代码背后的思路其实很简单：
+
+- `rounded-2xl` 负责整体气质
+- `border` 和 `bg-background` 负责层级
+- `p-6` 负责内容呼吸感
+- `text-muted-foreground` 负责正文不和标题抢重点
+
+当这些搭配变成熟悉的“肌肉记忆”后，页面搭建速度会明显快很多。
+
+## 三、我会怎么控制类名不失控
+
+很多人刚开始用 Tailwind 时，最常见的问题不是“不会写”，而是“越写越长”。
+
+我现在会用这张表提醒自己：
+
+| 现象 | 真实问题 | 更好的处理方式 |
+| ---- | -------- | -------------- |
+| 一个 `className` 特别长 | 组件职责太多 | 拆组件 |
+| 同样的类重复出现 | 结构重复 | 提取通用组件 |
+| 很难看出布局重点 | 顺序混乱 | 按布局、尺寸、视觉分组 |
+
+也就是说，Tailwind 本身不是问题，真正的问题常常是页面边界还没整理好。
+
+## 四、我自己常用的整理顺序
+
+我会尽量让类名顺序保持稳定：
+
+```tsx
+className="
+  flex items-center gap-3
+  rounded-xl border border-border
+  bg-background px-4 py-3
+  text-sm text-foreground
+  transition-colors hover:bg-muted
+"
+```
+
+我通常按这个顺序看：
+
+1. 布局：`flex`、`grid`、`items-center`
+2. 尺寸：`w-*`、`h-*`、`px-*`、`py-*`
+3. 外观：`rounded-*`、`border`、`bg-*`
+4. 文本：`text-*`、`font-*`
+5. 状态：`hover:*`、`focus:*`
+
+这样不是为了“好看”，而是为了以后回来看时更容易读。
+
+## 五、什么时候我会觉得该拆组件了
+
+当一个区块里同时出现下面这些东西时，我就会开始警觉：
+
+- 很多重复按钮
+- 多处重复标签样式
+- 一个卡片里塞了标题、描述、状态、操作、跳转
+
+比如项目卡片最开始可能只是：
+
+```tsx
+<div>
+  <h3>项目标题</h3>
+  <p>项目描述</p>
+</div>
+```
+
+但当它逐渐变成：
+
+```tsx
+<div>
+  <div>{/* 封面占位 */}</div>
+  <h3>项目标题</h3>
+  <p>项目描述</p>
+  <TagList tags={tags} />
+  <div>{/* GitHub / 在线预览 */}</div>
+</div>
+```
+
+这时候它就应该是一个独立组件，而不是继续塞在页面里。
+
+## 六、Tailwind 真正提升效率的地方
+
+我觉得 Tailwind 最有价值的地方，不是“少写 CSS”，而是：
+
+- 试错成本低
+- 调整快
+- 能直接看到结构和样式的关系
+- 更容易和组件拆分一起工作
+
+尤其是在博客这种练手项目里，它能让我把更多精力放在页面组织和数据流，而不是先被样式文件结构困住。
+
+## 七、一个我会持续提醒自己的原则
+
+如果我发现自己开始抱怨 “Tailwind 类太多”，我一般会先问自己一个问题：
+
+是不是页面本身就还没有拆清楚？
+
+很多时候，答案其实是“是的”。Tailwind 只是把这种混乱暴露得更直接而已。

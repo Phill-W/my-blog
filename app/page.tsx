@@ -6,9 +6,9 @@ import ProjectCard from "@/components/ProjectCard";
 import SectionHeading from "@/components/SectionHeading";
 import TagList from "@/components/TagList";
 import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { getLatestPosts, getPostHref } from "@/lib/posts";
 import { getFeaturedProjects } from "@/lib/projects";
+import { cn } from "@/lib/utils";
 
 const techTags = [
   "React",
@@ -17,13 +17,12 @@ const techTags = [
   "Tailwind CSS",
   "shadcn/ui",
 ];
-//获取项目数据
+
 const featuredProjects = getFeaturedProjects();
 
-//从服务器抽取数据
-const latestPosts = getLatestPosts(3);
+export default async function Home() {
+  const latestPosts = await getLatestPosts(3);
 
-export default function Home() {
   return (
     <main className="pb-16">
       <section className="border-b border-border/60 py-16 sm:py-24">

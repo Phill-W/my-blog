@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Children, type ReactNode } from "react";
 import { notFound } from "next/navigation";
-import ReactMarkdown, { type Components } from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 import Container from "@/components/Container";
 import TagList from "@/components/TagList";
@@ -12,8 +9,10 @@ import {
   getAllPostSlugs,
   getPostBySlug,
   getPostHref,
-  slugifyHeading,
+  getPostPageData,
 } from "@/lib/posts";
+
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
@@ -25,7 +24,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return {
@@ -41,86 +40,20 @@ export async function generateMetadata({
   };
 }
 
-function getTextContent(children: ReactNode): string {
-  return Children.toArray(children)
-    .map((child) =>
-      typeof child === "string" || typeof child === "number"
-        ? String(child)
-        : "",
-    )
-    .join("");
-}
-
-const markdownComponents: Components = {
-  h2: ({ children }) => {
-    const heading = getTextContent(children);
-    const id = slugifyHeading(heading);
-
-    return (
-      <h2 id={id} className="article-heading scroll-mt-24">
-        {children}
-      </h2>
-    );
-  },
-  h3: ({ children }) => {
-    const heading = getTextContent(children);
-    const id = slugifyHeading(heading);
-
-    return (
-      <h3 id={id} className="article-subheading scroll-mt-24">
-        {children}
-      </h3>
-    );
-  },
-  p: ({ children }) => <p>{children}</p>,
-  ul: ({ children }) => <ul>{children}</ul>,
-  ol: ({ children }) => <ol>{children}</ol>,
-  li: ({ children }) => <li>{children}</li>,
-  blockquote: ({ children }) => <blockquote>{children}</blockquote>,
-  hr: () => <hr />,
-  a: ({ href, children }) => (
-    <a href={href} className="article-link">
-      {children}
-    </a>
-  ),
-  strong: ({ children }) => <strong>{children}</strong>,
-  code: ({ children, className }) => {
-    const isCodeBlock = Boolean(className);
-
-    if (!isCodeBlock) {
-      return <code className="article-inline-code">{children}</code>;
-    }
-
-    return <code className={className}>{children}</code>;
-  },
-  pre: ({ children }) => <pre className="article-code-block">{children}</pre>,
-  table: ({ children }) => (
-    <div className="article-table-wrapper">
-      <table>{children}</table>
-    </div>
-  ),
-  img: ({ src, alt }) => (
-    <img
-      src={src ?? ""}
-      alt={alt ?? ""}
-      className="rounded-2xl border border-border/70"
-    />
-  ),
-};
-
 export default async function BlogPostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const pageData = await getPostPageData(slug);
 
-  if (!post) {
+  if (!pageData) {
     notFound();
   }
 
-  const { previousPost, nextPost } = getAdjacentPosts(slug);
+  const { post, Content } = pageData;
+  const { previousPost, nextPost } = await getAdjacentPosts(slug);
 
   return (
     <main className="pb-16">
@@ -161,12 +94,7 @@ export default async function BlogPostPage({
               <div className="aspect-[16/8] rounded-3xl border border-dashed border-border bg-muted/30" />
 
               <div className="article-content">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={markdownComponents}
-                >
-                  {post.content}
-                </ReactMarkdown>
+                <Content />
               </div>
 
               <div className="grid gap-4 border-t border-border/60 pt-8 sm:grid-cols-3">

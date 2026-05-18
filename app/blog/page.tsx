@@ -22,8 +22,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   const query = resolvedSearchParams.q?.trim() ?? "";
   const selectedTag = resolvedSearchParams.tag?.trim() ?? "全部";
-  const allPosts = getAllPosts();
-  const allTags = getAllPostTags();
+  const [allPosts, allTags] = await Promise.all([
+    getAllPosts(),
+    getAllPostTags(),
+  ]);
 
   const filteredPosts = filterPosts(allPosts, {
     query,
