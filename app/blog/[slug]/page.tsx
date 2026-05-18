@@ -44,7 +44,9 @@ export async function generateMetadata({
 function getTextContent(children: ReactNode): string {
   return Children.toArray(children)
     .map((child) =>
-      typeof child === "string" || typeof child === "number" ? String(child) : "",
+      typeof child === "string" || typeof child === "number"
+        ? String(child)
+        : "",
     )
     .join("");
 }
@@ -55,42 +57,54 @@ const markdownComponents: Components = {
     const id = slugifyHeading(heading);
 
     return (
-      <h2
-        id={id}
-        className="scroll-mt-24 text-2xl font-semibold tracking-tight text-foreground"
-      >
+      <h2 id={id} className="article-heading scroll-mt-24">
         {children}
       </h2>
     );
   },
+  h3: ({ children }) => {
+    const heading = getTextContent(children);
+    const id = slugifyHeading(heading);
+
+    return (
+      <h3 id={id} className="article-subheading scroll-mt-24">
+        {children}
+      </h3>
+    );
+  },
   p: ({ children }) => <p>{children}</p>,
-  ul: ({ children }) => <ul className="list-disc space-y-2 pl-6">{children}</ul>,
-  ol: ({ children }) => (
-    <ol className="list-decimal space-y-2 pl-6">{children}</ol>
-  ),
+  ul: ({ children }) => <ul>{children}</ul>,
+  ol: ({ children }) => <ol>{children}</ol>,
   li: ({ children }) => <li>{children}</li>,
-  blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-border pl-4 italic text-foreground/80">
-      {children}
-    </blockquote>
-  ),
+  blockquote: ({ children }) => <blockquote>{children}</blockquote>,
+  hr: () => <hr />,
   a: ({ href, children }) => (
-    <a
-      href={href}
-      className="text-foreground underline underline-offset-4 transition-colors hover:text-muted-foreground"
-    >
+    <a href={href} className="article-link">
       {children}
     </a>
   ),
-  code: ({ children }) => (
-    <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground">
-      {children}
-    </code>
+  strong: ({ children }) => <strong>{children}</strong>,
+  code: ({ children, className }) => {
+    const isCodeBlock = Boolean(className);
+
+    if (!isCodeBlock) {
+      return <code className="article-inline-code">{children}</code>;
+    }
+
+    return <code className={className}>{children}</code>;
+  },
+  pre: ({ children }) => <pre className="article-code-block">{children}</pre>,
+  table: ({ children }) => (
+    <div className="article-table-wrapper">
+      <table>{children}</table>
+    </div>
   ),
-  pre: ({ children }) => (
-    <pre className="overflow-x-auto rounded-2xl border border-border/70 bg-muted/30 p-4 font-mono text-sm text-foreground">
-      {children}
-    </pre>
+  img: ({ src, alt }) => (
+    <img
+      src={src ?? ""}
+      alt={alt ?? ""}
+      className="rounded-2xl border border-border/70"
+    />
   ),
 };
 
@@ -112,23 +126,27 @@ export default async function BlogPostPage({
     <main className="pb-16">
       <section className="border-b border-border/60 py-16 sm:py-20">
         <Container>
-          <div className="mx-auto max-w-4xl space-y-5">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              Blog Detail
-            </p>
+          <div className="mx-auto max-w-4xl space-y-6">
+            <div className="space-y-3 text-center sm:text-left">
+              <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                Blog Detail
+              </p>
 
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-              {post.title}
-            </h1>
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                {post.title}
+              </h1>
 
-            <p className="max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">
-              {post.description}
-            </p>
+              <p className="max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">
+                {post.description}
+              </p>
+            </div>
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <span>{post.date}</span>
               <span>·</span>
               <span>{post.readingTime}</span>
+              <span>·</span>
+              <span>{post.toc.length} 个章节</span>
             </div>
 
             <TagList tags={post.tags} />
@@ -138,11 +156,11 @@ export default async function BlogPostPage({
 
       <section className="py-10">
         <Container>
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_260px]">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
             <article className="space-y-8">
-              <div className="aspect-[16/8] rounded-2xl border border-dashed border-border bg-muted/30" />
+              <div className="aspect-[16/8] rounded-3xl border border-dashed border-border bg-muted/30" />
 
-              <div className="space-y-6 text-sm leading-7 text-muted-foreground sm:text-base">
+              <div className="article-content">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={markdownComponents}
@@ -208,10 +226,11 @@ export default async function BlogPostPage({
             </article>
 
             <aside className="space-y-6">
-              <div className="rounded-2xl border border-border/70 bg-muted/20 p-5">
+              <div className="sticky top-24 rounded-2xl border border-border/70 bg-muted/20 p-5">
                 <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">
                   目录
                 </h3>
+
                 <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
                   {post.toc.map((section) => (
                     <li key={section.id}>
