@@ -41,7 +41,7 @@ export function filterPosts(
     tag?: string;
   },
 ): Post[] {
-  const query = options.query?.trim().toLocaleLowerCase();
+  const query = options.query?.trim().toLowerCase();
   const tag = options.tag?.trim();
 
   return allPosts.filter((post) => {
@@ -50,6 +50,7 @@ export function filterPosts(
       post.title.toLowerCase().includes(query) ||
       post.description.toLowerCase().includes(query) ||
       post.tags.some((item) => item.toLowerCase().includes(query));
+
     const matchesTag = !tag || tag === "全部" || post.tags.includes(tag);
 
     return matchesQuery && matchesTag;
@@ -77,5 +78,22 @@ export function paginatePosts(allPosts: Post[], page?: string) {
     currentPage: safePage,
     totalPages,
     items: allPosts.slice(startIndex, endIndex),
+  };
+}
+
+export function getAdjacentPosts(slug: string): {
+  previousPost?: Post;
+  nextPost?: Post;
+} {
+  const allPosts = getAllPosts();
+  const currentIndex = allPosts.findIndex((post) => post.slug === slug);
+
+  if (currentIndex === -1) {
+    return {};
+  }
+
+  return {
+    previousPost: allPosts[currentIndex - 1],
+    nextPost: allPosts[currentIndex + 1],
   };
 }
