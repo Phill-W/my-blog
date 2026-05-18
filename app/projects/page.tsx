@@ -1,17 +1,33 @@
 import Link from "next/link";
 
 import Container from "@/components/Container";
-import ProjectCard from "@/components/ProjectCard";
-import SectionHeading from "@/components/SectionHeading";
-import TagList from "@/components/TagList";
+import ProjectFilterPanel from "@/components/projects/ProjectFilterPanel";
+import ProjectResults from "@/components/projects/ProjectResults";
 import { buttonVariants } from "@/components/ui/button";
+import {
+  filterProjects,
+  getAllProjectTags,
+  getAllProjects,
+} from "@/lib/projects";
 import { cn } from "@/lib/utils";
-import { getAllProjects, getAllProjectTags } from "@/lib/projects";
 
-const projects = getAllProjects();
-const projectTags = getAllProjectTags();
+type ProjectsPageProps = {
+  searchParams: Promise<{
+    tag?: string;
+  }>;
+};
 
-export default function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: ProjectsPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const selectedTag = resolvedSearchParams.tag?.trim() ?? "全部";
+
+  const projects = getAllProjects();
+  const projectTags = getAllProjectTags();
+  const filteredProjects = filterProjects(projects, selectedTag);
+  const hasFilters = selectedTag !== "全部";
+
   return (
     <main className="pb-16">
       <section className="border-b border-border/60 py-16 sm:py-20">
@@ -32,25 +48,17 @@ export default function ProjectsPage() {
 
       <section className="py-10">
         <Container>
-          <div className="space-y-3 rounded-2xl border border-border/70 bg-muted/20 p-5 sm:p-6">
-            <p className="text-sm font-medium text-foreground">分类浏览</p>
-            <TagList tags={projectTags} />
-          </div>
+          <ProjectFilterPanel tags={projectTags} selectedTag={selectedTag} />
         </Container>
       </section>
 
       <section className="py-6">
         <Container>
-          <SectionHeading
-            title="全部项目"
-            description={`当前展示 ${projects.length} 个项目`}
+          <ProjectResults
+            projects={filteredProjects}
+            filteredCount={filteredProjects.length}
+            hasFilters={hasFilters}
           />
-
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {projects.map((project) => (
-              <ProjectCard key={project.slug} {...project} />
-            ))}
-          </div>
         </Container>
       </section>
 

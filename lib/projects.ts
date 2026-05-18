@@ -19,3 +19,16 @@ export function getAllProjectTags(): string[] {
 
   return ["全部", ...Array.from(tags)];
 }
+
+export function filterProjects(
+  allProjects: Project[],
+  selectedTag?: string,
+): Project[] {
+  const tag = selectedTag?.trim();
+
+  if (!tag || tag === "全部") {
+    return allProjects;
+  }
+
+  return allProjects.filter((project) => project.tags.includes(tag));
+}
