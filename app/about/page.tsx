@@ -1,45 +1,13 @@
 import Container from "@/components/Container";
 import SectionHeading from "@/components/SectionHeading";
 import TagList from "@/components/TagList";
-
-const skillTags = [
-  "React",
-  "Next.js",
-  "TypeScript",
-  "Tailwind CSS",
-  "shadcn/ui",
-  "Node.js",
-  "Git",
-  "前端工程化",
-];
-
-const timeline = [
-  {
-    period: "2026 - 至今",
-    title: "前端学习与博客实践",
-    description: "围绕 Next.js、组件拆分、页面布局和内容组织方式进行系统练习。",
-  },
-  {
-    period: "2025",
-    title: "React 基础强化",
-    description:
-      "集中练习 JSX、props、状态管理、组件复用以及常见页面结构设计。",
-  },
-  {
-    period: "更早",
-    title: "前端兴趣建立",
-    description:
-      "从 HTML、CSS、JavaScript 开始接触前端，逐步形成系统学习计划。",
-  },
-];
-
-const contacts = [
-  "email@example.com",
-  "github.com/yourname",
-  "linkedin.com/in/yourname",
-];
-
-const interests = ["阅读技术书籍", "做页面练习", "整理学习笔记", "持续输出"];
+import {
+  contacts,
+  interests,
+  profile,
+  skillTags,
+  timeline,
+} from "@/content/site";
 
 export default function AboutPage() {
   return (
@@ -55,12 +23,14 @@ export default function AboutPage() {
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
                 About Me
               </p>
+              <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                {profile.role}
+              </p>
               <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                你好，我是 XXX
+                {profile.name}
               </h1>
               <p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-                我是一名前端学习者，正在通过一个个人博客项目系统练习页面布局、组件拆分、
-                Tailwind CSS 和 Next.js 的实际使用方式。
+                {profile.intro}
               </p>
             </div>
           </div>
@@ -110,8 +80,8 @@ export default function AboutPage() {
                   description="这里先放静态占位信息。"
                 />
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  {contacts.map((item) => (
-                    <p key={item}>{item}</p>
+                  {contacts.map((item, index) => (
+                    <p key={index}>{item.value}</p>
                   ))}
                 </div>
               </div>

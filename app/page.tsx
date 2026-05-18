@@ -8,6 +8,7 @@ import TagList from "@/components/TagList";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getLatestPosts, getPostHref } from "@/lib/posts";
+import { getFeaturedProjects } from "@/lib/projects";
 
 const techTags = [
   "React",
@@ -16,32 +17,9 @@ const techTags = [
   "Tailwind CSS",
   "shadcn/ui",
 ];
+//获取项目数据
+const featuredProjects = getFeaturedProjects();
 
-const featuredProjects = [
-  {
-    name: "个人博客系统",
-    description:
-      "基于 Next.js 构建的个人博客首页原型，练习页面布局、组件拆分和响应式设计。",
-    tags: ["Next.js", "TypeScript", "Tailwind"],
-    githubHref: "https://github.com",
-    previewHref: "https://example.com",
-  },
-  {
-    name: "任务管理页面",
-    description: "一个用于练习卡片布局、筛选栏和信息层级的静态项目展示页面。",
-    tags: ["React", "UI Design", "shadcn/ui"],
-    githubHref: "https://github.com",
-    previewHref: "https://example.com",
-  },
-  {
-    name: "组件拆分练习",
-    description:
-      "围绕通用卡片、标题区块和标签组件做拆分练习，提升页面组织能力。",
-    tags: ["React", "组件设计", "前端"],
-    githubHref: "https://github.com",
-    previewHref: "https://example.com",
-  },
-];
 //从服务器抽取数据
 const latestPosts = getLatestPosts(3);
 
@@ -122,7 +100,7 @@ export default function Home() {
 
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {featuredProjects.map((project) => (
-              <ProjectCard key={project.name} {...project} />
+              <ProjectCard key={project.slug} {...project} />
             ))}
           </div>
         </Container>

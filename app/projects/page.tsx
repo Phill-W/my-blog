@@ -6,35 +6,10 @@ import SectionHeading from "@/components/SectionHeading";
 import TagList from "@/components/TagList";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getAllProjects, getAllProjectTags } from "@/lib/projects";
 
-const projectTags = ["全部", "Web 应用", "练习项目", "UI 设计", "组件拆分"];
-
-const projects = [
-  {
-    name: "个人博客系统",
-    description:
-      "基于 Next.js 的个人博客练习项目，重点练习页面布局、组件拆分和静态路由组织。",
-    tags: ["Next.js", "TypeScript", "Tailwind"],
-    githubHref: "https://github.com",
-    previewHref: "https://example.com",
-  },
-  {
-    name: "任务管理页面",
-    description:
-      "一个用于练习信息密度、卡片布局和筛选区域组织方式的静态前端页面。",
-    tags: ["React", "UI Design", "shadcn/ui"],
-    githubHref: "https://github.com",
-    previewHref: "https://example.com",
-  },
-  {
-    name: "组件拆分练习",
-    description:
-      "围绕按钮、卡片、标签、标题区块等组件进行拆分和复用，提升页面组织能力。",
-    tags: ["React", "组件设计", "前端"],
-    githubHref: "https://github.com",
-    previewHref: "https://example.com",
-  },
-];
+const projects = getAllProjects();
+const projectTags = getAllProjectTags();
 
 export default function ProjectsPage() {
   return (
@@ -73,7 +48,7 @@ export default function ProjectsPage() {
 
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {projects.map((project) => (
-              <ProjectCard key={project.name} {...project} />
+              <ProjectCard key={project.slug} {...project} />
             ))}
           </div>
         </Container>

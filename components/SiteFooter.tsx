@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { FaEnvelope, FaGithub, FaLinkedin, FaXTwitter } from "react-icons/fa6";
-
+import { contacts, siteConfig } from "@/content/site";
 import Container from "@/components/Container";
 
 export default function SiteFooter() {
@@ -18,44 +18,22 @@ export default function SiteFooter() {
           <span className="font-semibold text-foreground">联系我</span>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-            <Link
-              href="mailto:email@example.com"
-              className="flex items-center gap-2 transition-colors hover:text-foreground"
-            >
-              <FaEnvelope className="h-4 w-4" />
-              <span>email@example.com</span>
-            </Link>
-
-            <Link
-              href="https://github.com"
-              className="flex items-center gap-2 transition-colors hover:text-foreground"
-            >
-              <FaGithub className="h-4 w-4" />
-              <span>GitHub</span>
-            </Link>
-
-            <Link
-              href="https://linkedin.com"
-              className="flex items-center gap-2 transition-colors hover:text-foreground"
-            >
-              <FaLinkedin className="h-4 w-4" />
-              <span>LinkedIn</span>
-            </Link>
-
-            <Link
-              href="https://x.com"
-              className="flex items-center gap-2 transition-colors hover:text-foreground"
-            >
-              <FaXTwitter className="h-4 w-4" />
-              <span>X</span>
-            </Link>
+            {contacts.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="transition-colors hover:text-foreground"
+              >
+                {item.label}: {item.value}
+              </Link>
+            ))}
           </div>
         </div>
 
         <hr className="my-4 border-border/50" />
 
         <div className="relative flex items-center justify-center text-sm text-muted-foreground">
-          <p>© 2026 MyBlog. All rights reserved.</p>
+          <p>{siteConfig.footerText}</p>
 
           <button
             type="button"

@@ -5,13 +5,7 @@ import { usePathname } from "next/navigation";
 
 import Container from "@/components/Container";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { href: "/", label: "首页" },
-  { href: "/blog", label: "博客" },
-  { href: "/projects", label: "项目" },
-  { href: "/about", label: "关于我" },
-];
+import { navItems, siteConfig } from "@/content/site";
 
 export default function SiteHeader() {
   const pathname = usePathname();
@@ -23,7 +17,7 @@ export default function SiteHeader() {
           href="/"
           className="text-lg font-semibold tracking-tight text-foreground"
         >
-          MyBlog
+          {siteConfig.siteName}
         </Link>
 
         <nav className="flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 p-1">
