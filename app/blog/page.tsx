@@ -1,24 +1,13 @@
-import Link from "next/link";
-
+import BlogFilterPanel from "@/components/blog/BlogFilterPanel";
+import BlogPagination from "@/components/blog/BlogPagination";
+import BlogPostResults from "@/components/blog/BlogPostResults";
 import Container from "@/components/Container";
-import PostCard from "@/components/PostCard";
-import SectionHeading from "@/components/SectionHeading";
-import { buttonVariants } from "@/components/ui/button";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyFooter,
-  EmptyHeader,
-  EmptyTitle,
-} from "@/components/ui/empty";
 import {
   filterPosts,
   getAllPostTags,
   getAllPosts,
-  getPostHref,
   paginatePosts,
 } from "@/lib/posts";
-import { cn } from "@/lib/utils";
 
 type BlogPageProps = {
   searchParams: Promise<{
@@ -28,34 +17,6 @@ type BlogPageProps = {
   }>;
 };
 
-function buildBlogUrl({
-  q,
-  tag,
-  page,
-}: {
-  q?: string;
-  tag?: string;
-  page?: number;
-}) {
-  const params = new URLSearchParams();
-
-  if (q) {
-    params.set("q", q);
-  }
-
-  if (tag && tag !== "全部") {
-    params.set("tag", tag);
-  }
-
-  if (page && page > 1) {
-    params.set("page", String(page));
-  }
-
-  const queryString = params.toString();
-
-  return queryString ? `/blog?${queryString}` : "/blog";
-}
-
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const resolvedSearchParams = await searchParams;
 
@@ -63,10 +24,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const selectedTag = resolvedSearchParams.tag?.trim() ?? "全部";
   const allPosts = getAllPosts();
   const allTags = getAllPostTags();
+
   const filteredPosts = filterPosts(allPosts, {
     query,
     tag: selectedTag,
   });
+
   const { currentPage, totalPages, items } = paginatePosts(
     filteredPosts,
     resolvedSearchParams.page,
@@ -94,190 +57,32 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
       <section className="py-10">
         <Container>
-          <div className="space-y-6 rounded-2xl border border-border/70 bg-muted/20 p-5 sm:p-6">
-            <form
-              action="/blog"
-              method="get"
-              className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_160px]"
-            >
-              <div className="space-y-2">
-                <label
-                  htmlFor="search-posts"
-                  className="text-sm font-medium text-foreground"
-                >
-                  搜索文章
-                </label>
-                <input
-                  id="search-posts"
-                  name="q"
-                  type="text"
-                  defaultValue={query}
-                  placeholder="搜索标题、描述或标签..."
-                  className="h-11 w-full rounded-xl border border-border bg-background px-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring"
-                />
-              </div>
-
-              <div className="flex items-end">
-                {selectedTag !== "全部" ? (
-                  <input type="hidden" name="tag" value={selectedTag} />
-                ) : null}
-
-                <button
-                  type="submit"
-                  className={cn(
-                    buttonVariants({ variant: "default", size: "default" }),
-                    "w-full",
-                  )}
-                >
-                  开始搜索
-                </button>
-              </div>
-            </form>
-
-            <div className="space-y-3">
-              <p className="text-sm font-medium text-foreground">标签筛选</p>
-              <div className="flex flex-wrap gap-2">
-                {allTags.map((tag) => {
-                  const isActive = selectedTag === tag;
-
-                  return (
-                    <Link
-                      key={tag}
-                      href={buildBlogUrl({
-                        q: query || undefined,
-                        tag,
-                        page: 1,
-                      })}
-                      className={cn(
-                        buttonVariants({
-                          variant: isActive ? "default" : "outline",
-                          size: "sm",
-                        }),
-                        "rounded-full",
-                      )}
-                    >
-                      {tag}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          <BlogFilterPanel
+            allTags={allTags}
+            query={query}
+            selectedTag={selectedTag}
+          />
         </Container>
       </section>
 
       <section className="py-6">
         <Container>
-          <SectionHeading
-            title="全部文章"
-            description={`当前筛选后共 ${filteredPosts.length} 篇文章`}
+          <BlogPostResults
+            posts={items}
+            filteredCount={filteredPosts.length}
+            hasFilters={hasFilters}
           />
-
-          {items.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {items.map((post) => (
-                <PostCard
-                  key={post.slug}
-                  title={post.title}
-                  description={post.description}
-                  date={post.date}
-                  tags={post.tags}
-                  href={getPostHref(post.slug)}
-                />
-              ))}
-            </div>
-          ) : (
-            <Empty className="mt-6">
-              <EmptyHeader>
-                <EmptyTitle>没有找到匹配的文章</EmptyTitle>
-                <EmptyDescription>
-                  可以试试更短的关键词，或者切换到其他标签。
-                </EmptyDescription>
-              </EmptyHeader>
-
-              <EmptyFooter>
-                <Link
-                  href="/blog"
-                  className={cn(
-                    buttonVariants({ variant: "default", size: "default" }),
-                  )}
-                >
-                  查看全部文章
-                </Link>
-
-                {hasFilters ? (
-                  <Link
-                    href="/blog"
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "default" }),
-                    )}
-                  >
-                    清空当前筛选
-                  </Link>
-                ) : null}
-              </EmptyFooter>
-            </Empty>
-          )}
         </Container>
       </section>
 
       <section className="pt-10">
         <Container>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href={buildBlogUrl({
-                q: query || undefined,
-                tag: selectedTag,
-                page: currentPage - 1,
-              })}
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                currentPage === 1 ? "pointer-events-none opacity-50" : "",
-              )}
-            >
-              上一页
-            </Link>
-
-            {Array.from({ length: totalPages }, (_, index) => {
-              const page = index + 1;
-              const isActive = page === currentPage;
-
-              return (
-                <Link
-                  key={page}
-                  href={buildBlogUrl({
-                    q: query || undefined,
-                    tag: selectedTag,
-                    page,
-                  })}
-                  className={cn(
-                    buttonVariants({
-                      variant: isActive ? "default" : "outline",
-                      size: "sm",
-                    }),
-                  )}
-                >
-                  {page}
-                </Link>
-              );
-            })}
-
-            <Link
-              href={buildBlogUrl({
-                q: query || undefined,
-                tag: selectedTag,
-                page: currentPage + 1,
-              })}
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                currentPage === totalPages
-                  ? "pointer-events-none opacity-50"
-                  : "",
-              )}
-            >
-              下一页
-            </Link>
-          </div>
+          <BlogPagination
+            query={query}
+            selectedTag={selectedTag}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
         </Container>
       </section>
     </main>
