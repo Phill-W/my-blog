@@ -7,6 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 import TagList from "@/components/TagList";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getLatestPosts, getPostHref } from "@/lib/posts";
 
 const techTags = [
   "React",
@@ -27,8 +28,7 @@ const featuredProjects = [
   },
   {
     name: "任务管理页面",
-    description:
-      "一个用于练习卡片布局、筛选栏和信息层级的静态项目展示页面。",
+    description: "一个用于练习卡片布局、筛选栏和信息层级的静态项目展示页面。",
     tags: ["React", "UI Design", "shadcn/ui"],
     githubHref: "https://github.com",
     previewHref: "https://example.com",
@@ -42,31 +42,8 @@ const featuredProjects = [
     previewHref: "https://example.com",
   },
 ];
-
-const latestPosts = [
-  {
-    title: "我是如何学习 Next.js 的",
-    description: "记录我从路由、布局到页面拆分的学习过程。",
-    date: "2026-05-17",
-    tags: ["Next.js", "React", "前端"],
-    href: "/blog/learn-nextjs",
-  },
-  {
-    title: "使用 Tailwind CSS 提升开发效率",
-    description: "整理我在实际写页面时常用的 Tailwind CSS 经验。",
-    date: "2026-05-12",
-    tags: ["Tailwind CSS", "CSS"],
-    href: "/blog/learn-nextjs",
-  },
-  {
-    title: "组件拆分应该怎么练",
-    description:
-      "从一个页面拆出更小、更清晰的组件，是前端很重要的基本功。",
-    date: "2026-05-08",
-    tags: ["React", "组件设计"],
-    href: "/blog/learn-nextjs",
-  },
-];
+//从服务器抽取数据
+const latestPosts = getLatestPosts(3);
 
 export default function Home() {
   return (
@@ -87,7 +64,8 @@ export default function Home() {
                   你好，我是 XXX
                 </h1>
                 <p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-                  我正在用 Next.js、Tailwind CSS 和 shadcn/ui 搭建自己的个人博客。
+                  我正在用 Next.js、Tailwind CSS 和 shadcn/ui
+                  搭建自己的个人博客。
                   这个项目会一步步练习布局、组件拆分、动态路由和内容管理。
                 </p>
               </div>
@@ -96,7 +74,7 @@ export default function Home() {
                 <Link
                   href="/projects"
                   className={cn(
-                    buttonVariants({ variant: "default", size: "default" })
+                    buttonVariants({ variant: "default", size: "default" }),
                   )}
                 >
                   查看我的项目
@@ -104,7 +82,7 @@ export default function Home() {
                 <Link
                   href="/blog"
                   className={cn(
-                    buttonVariants({ variant: "outline", size: "default" })
+                    buttonVariants({ variant: "outline", size: "default" }),
                   )}
                 >
                   阅读博客
@@ -133,7 +111,9 @@ export default function Home() {
             action={
               <Link
                 href="/projects"
-                className={cn(buttonVariants({ variant: "ghost", size: "default" }))}
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "default" }),
+                )}
               >
                 查看全部
               </Link>
@@ -156,7 +136,9 @@ export default function Home() {
             action={
               <Link
                 href="/blog"
-                className={cn(buttonVariants({ variant: "ghost", size: "default" }))}
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "default" }),
+                )}
               >
                 查看全部
               </Link>
@@ -165,7 +147,14 @@ export default function Home() {
 
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {latestPosts.map((post) => (
-              <PostCard key={post.title} {...post} />
+              <PostCard
+                key={post.title}
+                title={post.title}
+                description={post.description}
+                date={post.date}
+                tags={post.tags}
+                href={getPostHref(post.slug)}
+              />
             ))}
           </div>
         </Container>

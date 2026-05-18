@@ -23,7 +23,7 @@ export default function ProjectCard({
   return (
     <Card className="flex h-full flex-col border-border/70">
       <CardContent className="flex flex-1 flex-col gap-4 p-5">
-        <div className="aspect-[16/9] rounded-lg border border-dashed border-border bg-muted/30" />
+        <div className="aspect-video rounded-lg border border-dashed border-border bg-muted/30" />
 
         <div className="space-y-2">
           <h3 className="text-lg font-semibold tracking-tight text-foreground">

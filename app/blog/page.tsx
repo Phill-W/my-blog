@@ -1,49 +1,12 @@
-import Link from "next/link";
-
 import Container from "@/components/Container";
 import PostCard from "@/components/PostCard";
 import SectionHeading from "@/components/SectionHeading";
 import TagList from "@/components/TagList";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getAllPosts, getPostHref } from "@/lib/posts";
 
-const blogPosts = [
-  {
-    title: "我是如何学习 Next.js 的",
-    description: "记录我从路由、布局到页面拆分的学习过程。",
-    date: "2026-05-17",
-    tags: ["Next.js", "React", "前端"],
-    href: "/blog/learn-nextjs",
-  },
-  {
-    title: "使用 Tailwind CSS 提升开发效率",
-    description: "整理我在实际写页面时常用的 Tailwind CSS 经验。",
-    date: "2026-05-12",
-    tags: ["Tailwind CSS", "CSS"],
-    href: "/blog/learn-nextjs",
-  },
-  {
-    title: "组件拆分应该怎么练",
-    description: "从一个页面拆出更小、更清晰的组件，是前端很重要的基本功。",
-    date: "2026-05-08",
-    tags: ["React", "组件设计"],
-    href: "/blog/learn-nextjs",
-  },
-  {
-    title: "写静态页面时我会先想什么",
-    description: "在正式写代码前，先规划页面结构和组件职责会让后续轻松很多。",
-    date: "2026-05-03",
-    tags: ["前端", "思路整理"],
-    href: "/blog/learn-nextjs",
-  },
-  {
-    title: "我的 2026 技术学习计划",
-    description: "给自己定一个可持续的学习节奏，比短期冲刺更重要。",
-    date: "2026-04-28",
-    tags: ["学习计划", "成长"],
-    href: "/blog/learn-nextjs",
-  },
-];
+const blogPosts = getAllPosts();
 
 const filterTags = [
   "全部",
@@ -120,7 +83,14 @@ export default function BlogPage() {
 
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {blogPosts.map((post) => (
-              <PostCard key={post.title} {...post} />
+              <PostCard
+                key={post.slug}
+                title={post.title}
+                description={post.description}
+                date={post.date}
+                tags={post.tags}
+                href={getPostHref(post.slug)}
+              />
             ))}
           </div>
         </Container>
