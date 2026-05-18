@@ -1,25 +1,34 @@
 import fs from "node:fs";
 import path from "node:path";
-
-import matter from "gray-matter";
+import { cache, type ComponentType } from "react";
 
 export type PostTocItem = {
   id: string;
   heading: string;
 };
 
-export type Post = {
-  slug: string;
+export type PostMetadata = {
   title: string;
   description: string;
   date: string;
   readingTime: string;
   tags: string[];
-  content: string;
+};
+
+export type Post = PostMetadata & {
+  slug: string;
   toc: PostTocItem[];
 };
 
-type PostFrontmatter = Omit<Post, "slug" | "content" | "toc">;
+type PostModule = {
+  default: ComponentType;
+  metadata: PostMetadata;
+};
+
+type LoadedPost = {
+  module: PostModule;
+  post: Post;
+};
 
 const POSTS_DIRECTORY = path.join(process.cwd(), "content", "blog");
 
@@ -33,8 +42,8 @@ export function slugifyHeading(input: string): string {
     .replace(/[^\w\u4e00-\u9fa5-]/g, "");
 }
 
-function extractToc(content: string): PostTocItem[] {
-  return content
+function extractTocFromSource(source: string): PostTocItem[] {
+  return source
     .split("\n")
     .filter((line) => line.startsWith("## "))
     .map((line) => {
@@ -47,71 +56,117 @@ function extractToc(content: string): PostTocItem[] {
     });
 }
 
-function normalizeFrontmatterDate(date: unknown): string {
-  if (typeof date === "string") {
-    return date;
-  }
-
-  if (date instanceof Date) {
-    return date.toISOString().slice(0, 10);
-  }
-
-  return String(date ?? "");
-}
-
-function readPostFile(slug: string): Post | undefined {
-  const filePath = path.join(POSTS_DIRECTORY, `${slug}.md`);
+function getPostSourceBySlug(slug: string): string | undefined {
+  const filePath = path.join(POSTS_DIRECTORY, `${slug}.mdx`);
 
   if (!fs.existsSync(filePath)) {
     return undefined;
   }
 
-  const fileContent = fs.readFileSync(filePath, "utf8");
-  const { data, content } = matter(fileContent);
-  const frontmatter = data as PostFrontmatter;
+  return fs.readFileSync(filePath, "utf8");
+}
+
+const importPostModule = cache(
+  async (slug: string): Promise<PostModule | undefined> => {
+    try {
+      const postModule = (await import(
+        `@/content/blog/${slug}.mdx`
+      )) as PostModule;
+
+      if (!postModule.metadata || !postModule.default) {
+        return undefined;
+      }
+
+      return postModule;
+    } catch {
+      return undefined;
+    }
+  },
+);
+
+const loadPostBySlug = cache(
+  async (slug: string): Promise<LoadedPost | undefined> => {
+    const [postModule, source] = await Promise.all([
+      importPostModule(slug),
+      Promise.resolve(getPostSourceBySlug(slug)),
+    ]);
+
+    if (!postModule || !source) {
+      return undefined;
+    }
+
+    return {
+      module: postModule,
+      post: {
+        slug,
+        ...postModule.metadata,
+        toc: extractTocFromSource(source),
+      },
+    };
+  },
+);
+
+const loadAllPosts = cache(async (): Promise<Post[]> => {
+  const slugs = getAllPostSlugs();
+  const loadedPosts = await Promise.all(slugs.map((slug) => loadPostBySlug(slug)));
+
+  return loadedPosts
+    .map((entry) => entry?.post)
+    .filter((post): post is Post => Boolean(post))
+    .sort((a, b) => b.date.localeCompare(a.date));
+});
+
+export function getAllPostSlugs(): string[] {
+  return fs
+    .readdirSync(POSTS_DIRECTORY)
+    .filter((fileName) => fileName.endsWith(".mdx"))
+    .map((fileName) => fileName.replace(/\.mdx$/, ""));
+}
+
+export async function getPostBySlug(slug: string): Promise<Post | undefined> {
+  const loadedPost = await loadPostBySlug(slug);
+
+  return loadedPost?.post;
+}
+
+export async function getPostPageData(slug: string): Promise<
+  | {
+      post: Post;
+      Content: PostModule["default"];
+    }
+  | undefined
+> {
+  const loadedPost = await loadPostBySlug(slug);
+
+  if (!loadedPost) {
+    return undefined;
+  }
 
   return {
-    slug,
-    title: frontmatter.title,
-    description: frontmatter.description,
-    date: normalizeFrontmatterDate(frontmatter.date),
-    readingTime: frontmatter.readingTime,
-    tags: frontmatter.tags ?? [],
-    content: content.trim(),
-    toc: extractToc(content),
+    post: loadedPost.post,
+    Content: loadedPost.module.default,
   };
 }
 
-export function getAllPosts(): Post[] {
-  return fs
-    .readdirSync(POSTS_DIRECTORY)
-    .filter((fileName) => fileName.endsWith(".md"))
-    .map((fileName) => fileName.replace(/\.md$/, ""))
-    .map((slug) => readPostFile(slug))
-    .filter((post): post is Post => Boolean(post))
-    .sort((a, b) => b.date.localeCompare(a.date));
+export async function getAllPosts(): Promise<Post[]> {
+  return loadAllPosts();
 }
 
-export function getLatestPosts(limit: number): Post[] {
-  return getAllPosts().slice(0, limit);
-}
+export async function getLatestPosts(limit: number): Promise<Post[]> {
+  const posts = await getAllPosts();
 
-export function getAllPostSlugs(): string[] {
-  return getAllPosts().map((post) => post.slug);
-}
-
-export function getPostBySlug(slug: string): Post | undefined {
-  return readPostFile(slug);
+  return posts.slice(0, limit);
 }
 
 export function getPostHref(slug: string): string {
   return `/blog/${slug}`;
 }
 
-export function getAllPostTags(): string[] {
+export async function getAllPostTags(): Promise<string[]> {
   const tags = new Set<string>();
+  const posts = await getAllPosts();
 
-  for (const post of getAllPosts()) {
+  for (const post of posts) {
     for (const tag of post.tags) {
       tags.add(tag);
     }
@@ -167,11 +222,11 @@ export function paginatePosts(allPosts: Post[], page?: string) {
   };
 }
 
-export function getAdjacentPosts(slug: string): {
+export async function getAdjacentPosts(slug: string): Promise<{
   previousPost?: Post;
   nextPost?: Post;
-} {
-  const allPosts = getAllPosts();
+}> {
+  const allPosts = await getAllPosts();
   const currentIndex = allPosts.findIndex((post) => post.slug === slug);
 
   if (currentIndex === -1) {
