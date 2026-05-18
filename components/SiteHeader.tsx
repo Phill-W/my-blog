@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import Container from "@/components/Container";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import { navItems, siteConfig } from "@/content/site";
 import { cn } from "@/lib/utils";
 
@@ -88,20 +89,24 @@ export default function SiteHeader() {
           ))}
         </nav>
 
-        <button
-          type="button"
-          aria-label={isMenuOpen ? "关闭导航菜单" : "打开导航菜单"}
-          aria-expanded={isMenuOpen}
-          aria-controls="mobile-site-navigation"
-          onClick={handleToggleMenu}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-muted/40 text-foreground transition-colors hover:bg-muted md:hidden"
-        >
-          {isMenuOpen ? (
-            <X className="h-5 w-5" aria-hidden="true" />
-          ) : (
-            <Menu className="h-5 w-5" aria-hidden="true" />
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+
+          <button
+            type="button"
+            aria-label={isMenuOpen ? "关闭导航菜单" : "打开导航菜单"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-site-navigation"
+            onClick={handleToggleMenu}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-muted/40 text-foreground transition-colors hover:bg-muted md:hidden"
+          >
+            {isMenuOpen ? (
+              <X className="h-5 w-5" aria-hidden="true" />
+            ) : (
+              <Menu className="h-5 w-5" aria-hidden="true" />
+            )}
+          </button>
+        </div>
 
         {isMenuOpen ? (
           <div
