@@ -2,6 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { cache, type ComponentType } from "react";
 
+import {
+  blogPostRegistry,
+  type BlogPostRegistryEntry,
+} from "@/content/blog";
+
 export type PostTocItem = {
   id: string;
   heading: string;
@@ -20,17 +25,15 @@ export type Post = PostMetadata & {
   toc: PostTocItem[];
 };
 
-type PostModule = {
-  default: ComponentType;
-  metadata: PostMetadata;
-};
-
 type LoadedPost = {
-  module: PostModule;
+  entry: BlogPostRegistryEntry;
   post: Post;
 };
 
 const POSTS_DIRECTORY = path.join(process.cwd(), "content", "blog");
+const postRegistryBySlug = new Map(
+  blogPostRegistry.map((entry) => [entry.slug, entry]),
+);
 
 export const POSTS_PER_PAGE = 3;
 
@@ -56,8 +59,12 @@ function extractTocFromSource(source: string): PostTocItem[] {
     });
 }
 
-function getPostSourceBySlug(slug: string): string | undefined {
-  const filePath = path.join(POSTS_DIRECTORY, `${slug}.mdx`);
+function getRegistryEntryBySlug(slug: string): BlogPostRegistryEntry | undefined {
+  return postRegistryBySlug.get(slug);
+}
+
+function getPostSource(fileName: string): string | undefined {
+  const filePath = path.join(POSTS_DIRECTORY, fileName);
 
   if (!fs.existsSync(filePath)) {
     return undefined;
@@ -66,40 +73,25 @@ function getPostSourceBySlug(slug: string): string | undefined {
   return fs.readFileSync(filePath, "utf8");
 }
 
-const importPostModule = cache(
-  async (slug: string): Promise<PostModule | undefined> => {
-    try {
-      const postModule = (await import(
-        `@/content/blog/${slug}.mdx`
-      )) as PostModule;
-
-      if (!postModule.metadata || !postModule.default) {
-        return undefined;
-      }
-
-      return postModule;
-    } catch {
-      return undefined;
-    }
-  },
-);
-
 const loadPostBySlug = cache(
   async (slug: string): Promise<LoadedPost | undefined> => {
-    const [postModule, source] = await Promise.all([
-      importPostModule(slug),
-      Promise.resolve(getPostSourceBySlug(slug)),
-    ]);
+    const entry = getRegistryEntryBySlug(slug);
 
-    if (!postModule || !source) {
+    if (!entry) {
+      return undefined;
+    }
+
+    const source = getPostSource(entry.fileName);
+
+    if (!source) {
       return undefined;
     }
 
     return {
-      module: postModule,
+      entry,
       post: {
         slug,
-        ...postModule.metadata,
+        ...entry.metadata,
         toc: extractTocFromSource(source),
       },
     };
@@ -107,8 +99,9 @@ const loadPostBySlug = cache(
 );
 
 const loadAllPosts = cache(async (): Promise<Post[]> => {
-  const slugs = getAllPostSlugs();
-  const loadedPosts = await Promise.all(slugs.map((slug) => loadPostBySlug(slug)));
+  const loadedPosts = await Promise.all(
+    blogPostRegistry.map((entry) => loadPostBySlug(entry.slug)),
+  );
 
   return loadedPosts
     .map((entry) => entry?.post)
@@ -117,10 +110,7 @@ const loadAllPosts = cache(async (): Promise<Post[]> => {
 });
 
 export function getAllPostSlugs(): string[] {
-  return fs
-    .readdirSync(POSTS_DIRECTORY)
-    .filter((fileName) => fileName.endsWith(".mdx"))
-    .map((fileName) => fileName.replace(/\.mdx$/, ""));
+  return blogPostRegistry.map((entry) => entry.slug);
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | undefined> {
@@ -132,7 +122,7 @@ export async function getPostBySlug(slug: string): Promise<Post | undefined> {
 export async function getPostPageData(slug: string): Promise<
   | {
       post: Post;
-      Content: PostModule["default"];
+      Content: ComponentType;
     }
   | undefined
 > {
@@ -144,7 +134,7 @@ export async function getPostPageData(slug: string): Promise<
 
   return {
     post: loadedPost.post,
-    Content: loadedPost.module.default,
+    Content: loadedPost.entry.Content,
   };
 }
 
