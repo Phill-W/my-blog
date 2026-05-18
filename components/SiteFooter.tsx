@@ -1,10 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Mail } from "lucide-react";
+import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 
 import { contacts, siteConfig } from "@/content/site";
 import Container from "@/components/Container";
+
+function getContactIcon(label: string) {
+  switch (label) {
+    case "邮箱":
+      return <Mail className="h-4 w-4" aria-hidden="true" />;
+    case "GitHub":
+      return <FaGithub className="h-4 w-4" aria-hidden="true" />;
+    case "LinkedIn":
+      return <FaLinkedinIn className="h-4 w-4" aria-hidden="true" />;
+    case "X":
+      return <FaXTwitter className="h-4 w-4" aria-hidden="true" />;
+    default:
+      return null;
+  }
+}
 
 export default function SiteFooter() {
   const scrollToTop = () => {
@@ -22,9 +38,10 @@ export default function SiteFooter() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="transition-colors hover:text-foreground"
+                className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
               >
-                {item.label}: {item.value}
+                {getContactIcon(item.label)}
+                <span>{item.value}</span>
               </Link>
             ))}
           </div>
