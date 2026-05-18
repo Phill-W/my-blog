@@ -1,22 +1,24 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { Children, type ReactNode } from "react";
+import { notFound } from "next/navigation";
+import ReactMarkdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import Container from "@/components/Container";
 import TagList from "@/components/TagList";
-import { buttonVariants } from "@/components/ui/button";
 import {
   getAdjacentPosts,
   getAllPostSlugs,
   getPostBySlug,
   getPostHref,
+  slugifyHeading,
 } from "@/lib/posts";
-
-import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
 }
+
 export async function generateMetadata({
   params,
 }: {
@@ -39,6 +41,59 @@ export async function generateMetadata({
   };
 }
 
+function getTextContent(children: ReactNode): string {
+  return Children.toArray(children)
+    .map((child) =>
+      typeof child === "string" || typeof child === "number" ? String(child) : "",
+    )
+    .join("");
+}
+
+const markdownComponents: Components = {
+  h2: ({ children }) => {
+    const heading = getTextContent(children);
+    const id = slugifyHeading(heading);
+
+    return (
+      <h2
+        id={id}
+        className="scroll-mt-24 text-2xl font-semibold tracking-tight text-foreground"
+      >
+        {children}
+      </h2>
+    );
+  },
+  p: ({ children }) => <p>{children}</p>,
+  ul: ({ children }) => <ul className="list-disc space-y-2 pl-6">{children}</ul>,
+  ol: ({ children }) => (
+    <ol className="list-decimal space-y-2 pl-6">{children}</ol>
+  ),
+  li: ({ children }) => <li>{children}</li>,
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-4 border-border pl-4 italic text-foreground/80">
+      {children}
+    </blockquote>
+  ),
+  a: ({ href, children }) => (
+    <a
+      href={href}
+      className="text-foreground underline underline-offset-4 transition-colors hover:text-muted-foreground"
+    >
+      {children}
+    </a>
+  ),
+  code: ({ children }) => (
+    <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground">
+      {children}
+    </code>
+  ),
+  pre: ({ children }) => (
+    <pre className="overflow-x-auto rounded-2xl border border-border/70 bg-muted/30 p-4 font-mono text-sm text-foreground">
+      {children}
+    </pre>
+  ),
+};
+
 export default async function BlogPostPage({
   params,
 }: {
@@ -46,11 +101,12 @@ export default async function BlogPostPage({
 }) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
-  const { previousPost, nextPost } = getAdjacentPosts(slug);
 
   if (!post) {
     notFound();
   }
+
+  const { previousPost, nextPost } = getAdjacentPosts(slug);
 
   return (
     <main className="pb-16">
@@ -87,21 +143,12 @@ export default async function BlogPostPage({
               <div className="aspect-[16/8] rounded-2xl border border-dashed border-border bg-muted/30" />
 
               <div className="space-y-6 text-sm leading-7 text-muted-foreground sm:text-base">
-                {post.sections.map((section) => (
-                  <section
-                    key={section.id}
-                    id={section.id}
-                    className="space-y-3 scroll-mt-24"
-                  >
-                    <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                      {section.heading}
-                    </h2>
-
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={markdownComponents}
+                >
+                  {post.content}
+                </ReactMarkdown>
               </div>
 
               <div className="grid gap-4 border-t border-border/60 pt-8 sm:grid-cols-3">
@@ -166,7 +213,7 @@ export default async function BlogPostPage({
                   目录
                 </h3>
                 <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                  {post.sections.map((section) => (
+                  {post.toc.map((section) => (
                     <li key={section.id}>
                       <a
                         href={`#${section.id}`}

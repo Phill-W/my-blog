@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
-import { FaEnvelope, FaGithub, FaLinkedin, FaXTwitter } from "react-icons/fa6";
+
 import { contacts, siteConfig } from "@/content/site";
 import Container from "@/components/Container";
 
@@ -15,7 +15,7 @@ export default function SiteFooter() {
     <footer className="border-t border-border/70 bg-background">
       <Container className="py-4">
         <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
-          <span className="font-semibold text-foreground">联系我</span>
+          <span className="font-semibold text-foreground">联系方式</span>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
             {contacts.map((item) => (
@@ -39,7 +39,7 @@ export default function SiteFooter() {
             type="button"
             onClick={scrollToTop}
             className="absolute right-0 rounded-md border border-border bg-muted/40 p-1.5 transition-colors hover:bg-muted"
-            aria-label="回到顶部"
+            aria-label="返回顶部"
           >
             <ArrowUp className="h-4 w-4" />
           </button>
