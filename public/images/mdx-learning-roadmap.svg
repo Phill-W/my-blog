@@ -1,0 +1,33 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="48" fill="#F8FAFC"/>
+  <rect x="72" y="72" width="1056" height="576" rx="36" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+  <text x="108" y="138" fill="#0F172A" font-family="Arial, sans-serif" font-size="34" font-weight="700">Next.js 学习路线图</text>
+  <text x="108" y="178" fill="#475569" font-family="Arial, sans-serif" font-size="20">从页面结构到内容系统，按阶段推进会更稳。</text>
+
+  <rect x="108" y="236" width="272" height="180" rx="28" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="2"/>
+  <text x="136" y="284" fill="#0369A1" font-family="Arial, sans-serif" font-size="18" font-weight="700">阶段 1</text>
+  <text x="136" y="326" fill="#0F172A" font-family="Arial, sans-serif" font-size="28" font-weight="700">静态页面</text>
+  <text x="136" y="364" fill="#334155" font-family="Arial, sans-serif" font-size="18">布局、组件拆分、响应式</text>
+  <text x="136" y="392" fill="#334155" font-family="Arial, sans-serif" font-size="18">Tailwind 与 shadcn/ui</text>
+
+  <rect x="464" y="236" width="272" height="180" rx="28" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="2"/>
+  <text x="492" y="284" fill="#047857" font-family="Arial, sans-serif" font-size="18" font-weight="700">阶段 2 - 3</text>
+  <text x="492" y="326" fill="#0F172A" font-family="Arial, sans-serif" font-size="28" font-weight="700">数据与路由</text>
+  <text x="492" y="364" fill="#334155" font-family="Arial, sans-serif" font-size="18">抽离假数据、列表渲染</text>
+  <text x="492" y="392" fill="#334155" font-family="Arial, sans-serif" font-size="18">slug、params、404 处理</text>
+
+  <rect x="820" y="236" width="272" height="180" rx="28" fill="#FFFBEB" stroke="#FCD34D" stroke-width="2"/>
+  <text x="848" y="284" fill="#B45309" font-family="Arial, sans-serif" font-size="18" font-weight="700">阶段 4 - 5</text>
+  <text x="848" y="326" fill="#0F172A" font-family="Arial, sans-serif" font-size="28" font-weight="700">内容与部署</text>
+  <text x="848" y="364" fill="#334155" font-family="Arial, sans-serif" font-size="18">MDX、代码高亮、SEO</text>
+  <text x="848" y="392" fill="#334155" font-family="Arial, sans-serif" font-size="18">部署上线、排查构建问题</text>
+
+  <path d="M392 326H452" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M748 326H808" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M438 306L458 326L438 346" stroke="#94A3B8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M794 306L814 326L794 346" stroke="#94A3B8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="108" y="478" width="984" height="114" rx="24" fill="#0F172A"/>
+  <text x="144" y="530" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="24" font-weight="700">核心思路</text>
+  <text x="144" y="570" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="20">不要一开始把所有能力堆进去，先让页面、数据、路由、内容系统按顺序稳定下来。</text>
+</svg>

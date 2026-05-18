@@ -5,9 +5,13 @@ import {
   type ComponentPropsWithoutRef,
   type ReactNode,
 } from "react";
+import { ArrowUpRight } from "lucide-react";
 import type { MDXComponents } from "mdx/types";
 
+import ArticleImage from "@/components/mdx/ArticleImage";
+import Callout from "@/components/mdx/Callout";
 import CodeBlock from "@/components/mdx/CodeBlock";
+import ResourceLink from "@/components/mdx/ResourceLink";
 import { cn } from "@/lib/utils";
 
 function slugifyHeading(input: string): string {
@@ -99,6 +103,10 @@ type PreProps = ComponentPropsWithoutRef<"pre"> & {
   "data-language"?: string;
 };
 
+function isExternalHref(href?: string) {
+  return Boolean(href && /^https?:\/\//.test(href));
+}
+
 const components: MDXComponents = {
   h2: ({ children }) => {
     const heading = getTextContent(children);
@@ -126,11 +134,26 @@ const components: MDXComponents = {
   li: ({ children }) => <li>{children}</li>,
   blockquote: ({ children }) => <blockquote>{children}</blockquote>,
   hr: () => <hr />,
-  a: ({ href, children }) => (
-    <a href={href} className="article-link">
-      {children}
-    </a>
-  ),
+  a: ({ href, children }) => {
+    const external = isExternalHref(href);
+
+    return (
+      <a
+        href={href}
+        className={cn("article-link", external && "article-link--external")}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noreferrer" : undefined}
+      >
+        <span>{children}</span>
+        {external ? (
+          <ArrowUpRight
+            className="article-link__icon h-3.5 w-3.5"
+            aria-hidden="true"
+          />
+        ) : null}
+      </a>
+    );
+  },
   strong: ({ children }) => <strong>{children}</strong>,
   code: ({ children, className, ...props }: CodeProps) => {
     const isBlockCode = Boolean(props["data-language"]);
@@ -181,6 +204,9 @@ const components: MDXComponents = {
       className="rounded-2xl border border-border/70"
     />
   ),
+  Callout,
+  ArticleImage,
+  ResourceLink,
 };
 
 export function useMDXComponents(): MDXComponents {

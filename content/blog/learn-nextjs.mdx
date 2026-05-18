@@ -14,6 +14,10 @@ export const metadata = {
 
 对我来说，学习 Next.js 的核心不是“会用几个 API”，而是逐渐建立一种页面工程思维。
 
+<Callout type="tip" title="我后来很认同的一件事">
+  真正让我进步的不是一次性做出很多功能，而是先让页面结构、数据边界和路由约定稳定下来。这样后面再加 MDX、主题切换、筛选和分页时，项目不会轻易失控。
+</Callout>
+
 ## 二、我给自己拆的学习顺序
 
 我没有一上来就想把博客做成完整版，而是按更稳的顺序推进：
@@ -27,6 +31,12 @@ export const metadata = {
 | 第五阶段 | 上线部署 | 构建、环境差异、线上验证 |
 
 这样拆的好处是，我每次只处理一个主要问题，不会同时被 UI、数据、部署、配置压住。
+
+<ArticleImage
+  src="/images/mdx-learning-roadmap.svg"
+  alt="Next.js 学习路线图示意图"
+  caption="把学习过程拆成阶段之后，页面、数据、路由、内容系统之间的关系会清楚很多。"
+/>
 
 ## 三、这一阶段我重点练什么
 
@@ -72,6 +82,17 @@ export const metadata = {
 ### 3. 内容系统会反过来影响代码结构
 
 一旦博客开始支持 Markdown 或 MDX，文章就不再只是“几段写死在 JSX 的文字”，而会变成内容文件、元数据、路由和渲染器一起协作的系统。
+
+<Callout type="note" title="这正是 MDX 的价值">
+  普通 Markdown 更像“内容文本”，而 MDX 可以把内容和组件组合起来。也就是说，文章里不仅能写段落、列表和表格，还能插入提示块、图片说明卡片、外部资源卡片，甚至是更复杂的交互演示。
+</Callout>
+
+<ResourceLink
+  href="https://nextjs.org/docs/app/guides/mdx"
+  label="官方文档"
+  title="Next.js App Router 的 MDX 指南"
+  description="如果你想看 Next.js 官方推荐的 MDX 接入方式、文件结构和组件映射方式，这篇文档非常值得反复看。"
+/>
 
 ## 五、我现在会怎么开始一个新页面
 
