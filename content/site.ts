@@ -13,7 +13,7 @@ export const siteConfig = {
 export const profile = {
   name: "你好，我是 WYH",
   shortName: "WYH",
-  role: "前端开发学习者 · 正在搭建个人博客",
+  role: "前端开发学习者（恩师白天） · 正在搭建个人博客",
   intro:
     "我正在使用 Next.js、Tailwind CSS 和 shadcn/ui 搭建自己的个人博客。这个项目会一步步练习布局、组件拆分、动态路由和内容管理。",
   avatarSrc: "/images/wyh-avatar.jpg",
