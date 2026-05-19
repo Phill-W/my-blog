@@ -59,11 +59,6 @@ export const contacts = [
     href: "mailto:1453139442@qq.com",
   },
   {
-    label: "GitHub",
-    value: "github.com/Phill-W",
-    href: "https://github.com/Phill-W",
-  },
-  {
     label: "LinkedIn",
     value: "linkedin.com/in/yourname",
     href: "https://linkedin.com",
