@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -30,7 +31,7 @@ export async function generateMetadata({
   if (!post) {
     return buildMetadata({
       title: "文章未找到",
-      description: "你访问的文章不存在或已被移除。",
+      description: "你访问的文章不存在，或者已经被移除。",
       path: "/blog",
     });
   }
@@ -97,7 +98,28 @@ export default async function BlogPostPage({
         <Container>
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
             <article className="space-y-8">
-              <div className="aspect-[16/8] rounded-3xl border border-dashed border-border bg-muted/30" />
+              {post.cover ? (
+                <figure className="overflow-hidden rounded-3xl border border-border/70 bg-muted/20">
+                  <div className="relative aspect-[16/8]">
+                    <Image
+                      src={post.cover.src}
+                      alt={post.cover.alt}
+                      fill
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 960px"
+                      className="object-cover"
+                    />
+                  </div>
+
+                  {post.cover.caption ? (
+                    <figcaption className="border-t border-border/60 px-5 py-3 text-sm text-muted-foreground sm:px-6">
+                      {post.cover.caption}
+                    </figcaption>
+                  ) : null}
+                </figure>
+              ) : (
+                <div className="aspect-[16/8] rounded-3xl border border-dashed border-border bg-muted/30" />
+              )}
 
               <div className="article-content">
                 <Content />
@@ -122,7 +144,7 @@ export default async function BlogPostPage({
                       上一篇
                     </p>
                     <p className="mt-2 font-medium text-muted-foreground">
-                      已经是最新文章
+                      已经是第一篇文章
                     </p>
                   </div>
                 )}
@@ -131,7 +153,7 @@ export default async function BlogPostPage({
                   href="/blog"
                   className="flex items-center justify-center rounded-2xl border border-border/70 bg-background p-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/30"
                 >
-                  返回博客列表
+                  返回文章列表
                 </Link>
 
                 {nextPost ? (
@@ -152,7 +174,7 @@ export default async function BlogPostPage({
                       下一篇
                     </p>
                     <p className="mt-2 font-medium text-muted-foreground">
-                      已经是最后一篇
+                      已经是最后一篇文章
                     </p>
                   </div>
                 )}

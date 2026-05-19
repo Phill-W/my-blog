@@ -1,0 +1,233 @@
+export const metadata = {
+  title: "React 基础学习笔记",
+  description:
+    "从 JSX、组件、状态管理到 React Router，整理一份适合前端入门阶段反复回看的 React 基础笔记。",
+  date: "2026-05-19",
+  readingTime: "15 分钟阅读",
+  tags: ["React", "JSX", "状态管理", "React Router"],
+  cover: {
+    src: "/blog/react_basic.png",
+    alt: "React 基础学习笔记封面图",
+    caption: "React 基础学习整理",
+  },
+};
+
+## 一、我为什么要认真补 React 基础
+
+React 对我来说，不只是“会不会写几个组件”，而是前端工程思维真正开始成形的一步。
+
+如果基础没打稳，后面不管是学 Next.js、状态管理、路由系统，还是继续往组件设计和内容系统走，都会经常出现一种情况：页面能写出来，但自己并不真正知道为什么这样组织。
+
+所以我在整理这篇笔记时，重点不是“把所有 API 都记全”，而是把下面这些问题讲清楚：
+
+- JSX 到底是什么
+- 组件为什么是 React 的核心
+- 状态更新为什么会驱动页面变化
+- 路由和状态管理在项目里各自负责什么
+
+<Callout type="tip" title="学习 React 时我很认同的一点">
+  不要急着追求把所有知识点一次性学完。先把 JSX、组件、props、state、事件处理这些最基础的东西真正写顺，再往后接路由和状态管理，整体会轻松很多。
+</Callout>
+
+## 二、React 最重要的几个核心概念
+
+### 1. JSX 是“更好写的 UI 描述方式”
+
+JSX 不是浏览器原生认识的语法，而是一种更贴近 HTML 的写法，最后会被编译成 JavaScript。
+
+比如这段 JSX：
+
+```tsx
+const title = <h1>Hello React</h1>;
+```
+
+背后可以理解成 React 在创建一个描述界面的对象结构。
+
+相比直接手写 `React.createElement()`，JSX 更直观，也更适合复杂页面。
+
+### 2. 组件是 React 组织页面的基本单位
+
+在 React 里，一个页面通常不会被写成一整块巨大的 JSX，而是会被拆成一个个职责明确的小组件。
+
+例如：
+
+```tsx
+export default function App() {
+  return (
+    <main>
+      <Header />
+      <Sidebar />
+      <ArticleList />
+      <Footer />
+    </main>
+  );
+}
+```
+
+这样做的意义不是“文件变多”，而是让每一块 UI 都有更清楚的边界。
+
+### 3. 状态是页面变化的来源
+
+React 的核心体验之一，是“数据变了，页面自动重新渲染”。
+
+```tsx
+import { useState } from "react";
+
+export default function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>当前计数：{count}</p>
+      <button onClick={() => setCount(count + 1)}>+1</button>
+    </div>
+  );
+}
+```
+
+这里真正重要的，不是按钮本身，而是你开始理解：
+
+- `count` 是状态
+- `setCount` 是更新状态的方法
+- 状态更新后，组件会重新执行并更新页面
+
+## 三、JSX 里我最容易踩坑的地方
+
+### 1. 只能有一个根节点
+
+```tsx
+export default function Demo() {
+  return (
+    <>
+      <h1>标题</h1>
+      <p>内容</p>
+    </>
+  );
+}
+```
+
+如果有多个并列节点，就需要用 `<>...</>` 或其他父元素包起来。
+
+### 2. 属性名和 HTML 不完全一样
+
+在 JSX 里，很多属性名要写成 JavaScript 风格：
+
+- `class` -> `className`
+- `for` -> `htmlFor`
+- 内联样式要写对象
+
+```tsx
+<label htmlFor="username" className="text-sm font-medium">
+  用户名
+</label>
+```
+
+### 3. 大括号里放的是表达式
+
+你可以在 JSX 里直接写变量、函数调用和条件表达式：
+
+```tsx
+const name = "WYH";
+const isLoading = false;
+
+export default function Demo() {
+  return (
+    <div>
+      <h1>{name}</h1>
+      <p>{isLoading ? "加载中..." : "加载完成"}</p>
+    </div>
+  );
+}
+```
+
+但不能直接把普通对象整块渲染出来。
+
+## 四、我会怎样理解组件拆分
+
+我现在会把组件拆分理解成一句话：
+
+**让一个组件只负责一件尽量清楚的事。**
+
+比如：
+
+- `PostCard` 只负责文章卡片展示
+- `ThemeToggle` 只负责主题切换
+- `BlogFilterPanel` 只负责筛选条件输入
+
+而不是把“请求数据、处理交互、展示 UI、弹窗、筛选、分页”全塞进一个组件里。
+
+<Callout type="note" title="判断是否该拆组件的一个简单标准">
+  当一个组件已经很难用一句话说明“它到底负责什么”时，通常就该拆了。
+</Callout>
+
+## 五、状态管理是从 useState 往外长出来的
+
+一开始学 React，最先接触的一般都是 `useState`。这很好，因为它让你先理解本地状态怎么工作。
+
+但项目再往后走，你会遇到一些问题：
+
+- 多个组件要共享数据怎么办
+- 一个状态要跨层级传递怎么办
+- 路由切换后状态怎么保留
+
+这时你就会接触到 Context、Redux、Zustand 这些方案。
+
+我自己的理解是：
+
+| 场景 | 更适合的方式 |
+| ---- | ------------ |
+| 单个组件内部状态 | `useState` |
+| 少量跨组件共享 | `Context` |
+| 更独立、轻量的全局状态 | `Zustand` |
+| 复杂业务状态流 | Redux Toolkit |
+
+所以状态管理不是“学一个新库”这么简单，而是先搞清楚：**这个状态到底应该放在哪一层。**
+
+## 六、React Router 解决的是页面切换和 URL 对应关系
+
+React 本身只负责构建 UI，不负责页面路由。  
+当项目开始有多个页面时，就要让“路径”和“页面组件”建立映射关系。
+
+例如：
+
+```tsx
+import { BrowserRouter, Route, Routes } from "react-router";
+
+import HomePage from "./pages/HomePage";
+import AboutPage from "./pages/AboutPage";
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+```
+
+这样你才能从“单个页面组件”真正进入“多页面应用结构”。
+
+## 七、学习 React 时我现在最看重什么
+
+如果现在让我重新开始学 React，我会优先盯住这几件事：
+
+1. JSX 能不能写得顺
+2. 组件能不能拆得清楚
+3. props 和 state 能不能分清
+4. 页面交互是不是尽量由状态驱动
+5. 路由和状态管理是不是各自承担了对的职责
+
+这些东西看起来不炫，但它们决定了后面项目能不能稳稳往前走。
+
+## 八、下一步我会怎么继续
+
+React 基础学到这里，下一步我会更自然地往这些方向延伸：
+
+- 在真实项目里继续练组件拆分
+- 用 Next.js 理解页面结构和路由组织
+- 用 MDX、筛选、分页这些功能练更完整的前端工程思维
+
+对我来说，React 不是一个孤立的知识点，而是后面整个博客项目和组件化思维的起点。

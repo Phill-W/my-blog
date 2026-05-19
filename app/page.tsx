@@ -138,6 +138,7 @@ export default async function Home() {
                 date={post.date}
                 tags={post.tags}
                 href={getPostHref(post.slug)}
+                cover={post.cover}
               />
             ))}
           </div>

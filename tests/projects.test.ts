@@ -54,19 +54,19 @@ describe("filterProjects", () => {
 
   it("会按具体标签过滤项目", () => {
     const allProjects = getAllProjects();
-    const filteredProjects = filterProjects(allProjects, "React");
+    const filteredProjects = filterProjects(allProjects, "Next.js");
 
     expect(filteredProjects.length).toBeGreaterThan(0);
-    expect(filteredProjects.every((project) => project.tags.includes("React"))).toBe(
-      true,
-    );
+    expect(
+      filteredProjects.every((project) => project.tags.includes("Next.js")),
+    ).toBe(true);
   });
 
   it("会去掉标签前后的空格", () => {
     const allProjects = getAllProjects();
 
-    expect(filterProjects(allProjects, "  React  ")).toEqual(
-      filterProjects(allProjects, "React"),
+    expect(filterProjects(allProjects, "  Next.js  ")).toEqual(
+      filterProjects(allProjects, "Next.js"),
     );
   });
 

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 type BlogPostSummary = Pick<
   Post,
-  "slug" | "title" | "description" | "date" | "tags"
+  "slug" | "title" | "description" | "date" | "tags" | "cover"
 >;
 
 type BlogPostResultsProps = {
@@ -46,6 +46,7 @@ export default function BlogPostResults({
               date={post.date}
               tags={post.tags}
               href={getPostHref(post.slug)}
+              cover={post.cover}
             />
           ))}
         </div>

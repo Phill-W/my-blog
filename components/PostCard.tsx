@@ -1,8 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, CalendarDays } from "lucide-react";
 
 import TagList from "@/components/TagList";
 import { Card, CardContent } from "@/components/ui/card";
+import type { PostCover } from "@/lib/posts";
 
 type PostCardProps = {
   title: string;
@@ -10,6 +12,7 @@ type PostCardProps = {
   date: string;
   tags: string[];
   href: string;
+  cover?: PostCover;
 };
 
 export default function PostCard({
@@ -18,6 +21,7 @@ export default function PostCard({
   date,
   tags,
   href,
+  cover,
 }: PostCardProps) {
   return (
     <Link
@@ -26,19 +30,29 @@ export default function PostCard({
     >
       <Card className="h-full overflow-hidden border-border/70 bg-background transition-all duration-200 group-hover:-translate-y-1 group-hover:border-foreground/20 group-hover:shadow-lg">
         <div className="relative aspect-[16/9] border-b border-border/70 bg-muted/30">
-          <div className="absolute inset-4 rounded-xl border border-border/70 bg-background/70 p-4">
-            <div className="mb-4 flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-foreground/30" />
-              <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
-              <span className="h-2.5 w-2.5 rounded-full bg-foreground/10" />
-            </div>
+          {cover ? (
+            <Image
+              src={cover.src}
+              alt={cover.alt}
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            />
+          ) : (
+            <div className="absolute inset-4 rounded-xl border border-border/70 bg-background/70 p-4">
+              <div className="mb-4 flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-foreground/30" />
+                <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
+                <span className="h-2.5 w-2.5 rounded-full bg-foreground/10" />
+              </div>
 
-            <div className="space-y-2">
-              <span className="block h-2 w-3/4 rounded-full bg-foreground/20" />
-              <span className="block h-2 w-full rounded-full bg-foreground/10" />
-              <span className="block h-2 w-2/3 rounded-full bg-foreground/10" />
+              <div className="space-y-2">
+                <span className="block h-2 w-3/4 rounded-full bg-foreground/20" />
+                <span className="block h-2 w-full rounded-full bg-foreground/10" />
+                <span className="block h-2 w-2/3 rounded-full bg-foreground/10" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <CardContent className="flex h-full flex-col gap-5 p-5 sm:p-6">

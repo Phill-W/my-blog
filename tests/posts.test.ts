@@ -18,6 +18,7 @@ function createPost(overrides: Partial<Post> = {}): Post {
     date: "2026-05-01",
     readingTime: "5 分钟阅读",
     tags: ["React"],
+    cover: undefined,
     toc: [],
     ...overrides,
   };
@@ -48,6 +49,17 @@ describe("slugifyHeading", () => {
 });
 
 describe("filterPosts", () => {
+  it("会保留文章 metadata 里的封面字段", async () => {
+    const posts = await getAllPosts();
+    const targetPost = posts.find((post) => post.slug === "learn-nextjs");
+
+    expect(targetPost?.cover).toEqual({
+      src: "/images/my-blog-cover.png",
+      alt: "个人博客首页界面截图",
+      caption: "基于 Next.js 构建个人博客时的页面效果。",
+    });
+  });
+
   it("不传筛选条件时会返回全部文章", async () => {
     const posts = await getAllPosts();
 

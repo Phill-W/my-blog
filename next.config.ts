@@ -1,7 +1,20 @@
 import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cloud-pic.wpsgo.com",
+      },
+      {
+        protocol: "https",
+        hostname: "y.qq.com",
+      },
+    ],
+  },
+};
 
 const withMDX = createMDX({
   options: {

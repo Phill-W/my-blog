@@ -13,12 +13,19 @@ export type PostTocItem = {
   heading: string;
 };
 
+export type PostCover = {
+  src: string;
+  alt: string;
+  caption?: string;
+};
+
 export type PostMetadata = {
   title: string;
   description: string;
   date: string;
   readingTime: string;
   tags: string[];
+  cover?: PostCover;
 };
 
 export type Post = PostMetadata & {

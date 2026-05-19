@@ -9,6 +9,9 @@ import PostComponentSplitting, {
 import PostLearnNextjs, {
   metadata as postLearnNextjsMetadata,
 } from "./learn-nextjs.mdx";
+import PostReactBasic, {
+  metadata as postReactBasicMetadata,
+} from "./react-basic.mdx";
 import PostStaticPageThinking, {
   metadata as postStaticPageThinkingMetadata,
 } from "./static-page-thinking.mdx";
@@ -22,6 +25,11 @@ type BlogPostMetadata = {
   date: string;
   readingTime: string;
   tags: string[];
+  cover?: {
+    src: string;
+    alt: string;
+    caption?: string;
+  };
 };
 
 export type BlogPostRegistryEntry = {
@@ -49,6 +57,12 @@ export const blogPostRegistry = [
     fileName: "learn-nextjs.mdx",
     Content: PostLearnNextjs,
     metadata: postLearnNextjsMetadata,
+  },
+  {
+    slug: "react-basic",
+    fileName: "react-basic.mdx",
+    Content: PostReactBasic,
+    metadata: postReactBasicMetadata,
   },
   {
     slug: "static-page-thinking",
