@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import Container from "@/components/Container";
@@ -6,6 +7,7 @@ import ProjectCard from "@/components/ProjectCard";
 import SectionHeading from "@/components/SectionHeading";
 import TagList from "@/components/TagList";
 import { buttonVariants } from "@/components/ui/button";
+import { profile } from "@/content/site";
 import { getLatestPosts, getPostHref } from "@/lib/posts";
 import { getFeaturedProjects } from "@/lib/projects";
 import { cn } from "@/lib/utils";
@@ -28,8 +30,15 @@ export default async function Home() {
       <section className="border-b border-border/60 py-16 sm:py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-            <div className="mx-auto flex h-36 w-36 items-center justify-center rounded-full border border-border bg-muted/40 text-3xl font-semibold text-muted-foreground">
-              XX
+            <div className="mx-auto h-36 w-36 overflow-hidden rounded-full border border-border bg-muted/40">
+              <Image
+                src={profile.avatarSrc}
+                alt={profile.avatarAlt}
+                width={144}
+                height={144}
+                className="h-full w-full object-cover"
+                priority
+              />
             </div>
 
             <div className="space-y-6 text-center lg:text-left">
@@ -38,12 +47,10 @@ export default async function Home() {
                   Frontend Developer
                 </p>
                 <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                  你好，我是 XXX
+                  {profile.name}
                 </h1>
                 <p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-                  我正在用 Next.js、Tailwind CSS 和 shadcn/ui
-                  搭建自己的个人博客。
-                  这个项目会一步步练习布局、组件拆分、动态路由和内容管理。
+                  {profile.intro}
                 </p>
               </div>
 

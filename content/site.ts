@@ -11,10 +11,13 @@ export const siteConfig = {
 };
 
 export const profile = {
-  name: "你好，我是 XXX",
-  role: "前端开发者",
+  name: "你好，我是 WYH",
+  shortName: "WYH",
+  role: "前端开发学习者 · 正在搭建个人博客",
   intro:
     "我正在使用 Next.js、Tailwind CSS 和 shadcn/ui 搭建自己的个人博客。这个项目会一步步练习布局、组件拆分、动态路由和内容管理。",
+  avatarSrc: "/images/wyh-avatar.jpg",
+  avatarAlt: "WYH 的头像",
 };
 
 export const skillTags = [
@@ -52,8 +55,8 @@ export const timeline = [
 export const contacts = [
   {
     label: "邮箱",
-    value: "email@example.com",
-    href: "mailto:email@example.com",
+    value: "1453139442@qq.com",
+    href: "mailto:1453139442@qq.com",
   },
   {
     label: "GitHub",
@@ -68,7 +71,7 @@ export const contacts = [
   {
     label: "X",
     value: "x.com/yourname",
-    href: "https://x.com",
+    href: "https://x.com/yourname",
   },
 ];
 

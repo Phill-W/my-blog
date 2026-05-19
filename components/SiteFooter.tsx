@@ -4,8 +4,8 @@ import Link from "next/link";
 import { ArrowUp, Mail } from "lucide-react";
 import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 
-import { contacts, siteConfig } from "@/content/site";
 import Container from "@/components/Container";
+import { contacts, siteConfig } from "@/content/site";
 
 function getContactIcon(label: string) {
   switch (label) {
@@ -20,6 +20,10 @@ function getContactIcon(label: string) {
     default:
       return null;
   }
+}
+
+function isExternalLink(href: string) {
+  return /^https?:\/\//.test(href);
 }
 
 export default function SiteFooter() {
@@ -39,6 +43,8 @@ export default function SiteFooter() {
                 key={item.label}
                 href={item.href}
                 className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
+                target={isExternalLink(item.href) ? "_blank" : undefined}
+                rel={isExternalLink(item.href) ? "noreferrer" : undefined}
               >
                 {getContactIcon(item.label)}
                 <span>{item.value}</span>

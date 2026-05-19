@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 
 import Container from "@/components/Container";
 import SectionHeading from "@/components/SectionHeading";
@@ -12,6 +14,10 @@ import {
 } from "@/content/site";
 import { buildMetadata } from "@/lib/site";
 
+function isExternalLink(href: string) {
+  return /^https?:\/\//.test(href);
+}
+
 export const metadata: Metadata = buildMetadata({
   title: "关于我",
   description: "了解我的学习方向、技能栈、经历时间线和联系方式。",
@@ -24,8 +30,15 @@ export default function AboutPage() {
       <section className="border-b border-border/60 py-16 sm:py-20">
         <Container>
           <div className="grid gap-10 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-            <div className="mx-auto flex h-36 w-36 items-center justify-center rounded-full border border-border bg-muted/40 text-3xl font-semibold text-muted-foreground">
-              XX
+            <div className="mx-auto h-36 w-36 overflow-hidden rounded-full border border-border bg-muted/40">
+              <Image
+                src={profile.avatarSrc}
+                alt={profile.avatarAlt}
+                width={144}
+                height={144}
+                className="h-full w-full object-cover"
+                priority
+              />
             </div>
 
             <div className="space-y-4 text-center lg:text-left">
@@ -86,11 +99,19 @@ export default function AboutPage() {
               <div className="rounded-2xl border border-border/70 bg-background p-6">
                 <SectionHeading
                   title="联系方式"
-                  description="这里先放静态占位信息。"
+                  description="这里放我的基础联系信息。"
                 />
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  {contacts.map((item, index) => (
-                    <p key={index}>{item.value}</p>
+                  {contacts.map((item) => (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      className="block transition-colors hover:text-foreground"
+                      target={isExternalLink(item.href) ? "_blank" : undefined}
+                      rel={isExternalLink(item.href) ? "noreferrer" : undefined}
+                    >
+                      {item.value}
+                    </Link>
                   ))}
                 </div>
               </div>
