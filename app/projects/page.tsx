@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import Container from "@/components/Container";
@@ -9,7 +10,14 @@ import {
   getAllProjectTags,
   getAllProjects,
 } from "@/lib/projects";
+import { buildMetadata } from "@/lib/site";
 import { cn } from "@/lib/utils";
+
+export const metadata: Metadata = buildMetadata({
+  title: "项目展示",
+  description: "查看我整理和实现中的前端项目，以及不同主题下的实践成果。",
+  path: "/projects",
+});
 
 type ProjectsPageProps = {
   searchParams: Promise<{

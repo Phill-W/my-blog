@@ -11,6 +11,7 @@ import {
   getPostHref,
   getPostPageData,
 } from "@/lib/posts";
+import { buildMetadata } from "@/lib/site";
 
 export const dynamicParams = false;
 
@@ -27,17 +28,22 @@ export async function generateMetadata({
   const post = await getPostBySlug(slug);
 
   if (!post) {
-    return {
-      title: "文章未找到 | MyBlog",
+    return buildMetadata({
+      title: "文章未找到",
       description: "你访问的文章不存在或已被移除。",
-    };
+      path: "/blog",
+    });
   }
 
-  return {
-    title: `${post.title} | MyBlog`,
+  return buildMetadata({
+    title: post.title,
     description: post.description,
+    path: getPostHref(slug),
     keywords: post.tags,
-  };
+    type: "article",
+    publishedTime: new Date(post.date).toISOString(),
+    tags: post.tags,
+  });
 }
 
 export default async function BlogPostPage({

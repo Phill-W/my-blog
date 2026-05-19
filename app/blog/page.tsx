@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import BlogFilterPanel from "@/components/blog/BlogFilterPanel";
 import BlogPagination from "@/components/blog/BlogPagination";
 import BlogPostResults from "@/components/blog/BlogPostResults";
@@ -8,6 +10,13 @@ import {
   getAllPosts,
   paginatePosts,
 } from "@/lib/posts";
+import { buildMetadata } from "@/lib/site";
+
+export const metadata: Metadata = buildMetadata({
+  title: "博客",
+  description: "记录我的学习过程、项目实践和前端思考的文章列表。",
+  path: "/blog",
+});
 
 type BlogPageProps = {
   searchParams: Promise<{

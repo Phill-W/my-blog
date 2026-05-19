@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Container from "@/components/Container";
 import SectionHeading from "@/components/SectionHeading";
 import TagList from "@/components/TagList";
@@ -8,6 +10,13 @@ import {
   skillTags,
   timeline,
 } from "@/content/site";
+import { buildMetadata } from "@/lib/site";
+
+export const metadata: Metadata = buildMetadata({
+  title: "关于我",
+  description: "了解我的学习方向、技能栈、经历时间线和联系方式。",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

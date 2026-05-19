@@ -6,6 +6,14 @@ import "./globals.css";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import {
+  defaultOgImage,
+  defaultOpenGraphImage,
+  siteDescription,
+  siteLocale,
+  siteName,
+  siteUrl,
+} from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({
@@ -36,8 +44,30 @@ const themeScript = `
 `;
 
 export const metadata: Metadata = {
-  title: "MyBlog | 个人博客",
-  description: "一个使用 Next.js、Tailwind CSS 和 shadcn/ui 构建的个人博客。",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "MyBlog | 个人博客",
+    template: "%s | MyBlog",
+  },
+  description: siteDescription,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName,
+    title: "MyBlog | 个人博客",
+    description: siteDescription,
+    locale: siteLocale,
+    images: [defaultOpenGraphImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MyBlog | 个人博客",
+    description: siteDescription,
+    images: [defaultOgImage],
+  },
 };
 
 export default function RootLayout({
